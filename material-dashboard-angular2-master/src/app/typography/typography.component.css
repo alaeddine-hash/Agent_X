@@ -1,0 +1,12 @@
+.ct-label {
+    font-size: 12px !important; /* Smaller font for donut labels */
+    fill: #555;                 /* Label text color */
+  }
+
+/* Rotate x-axis labels by 45 degrees */
+.ct-chart .ct-label.ct-horizontal {
+    transform: rotate(-45deg);
+    text-anchor: end;
+    /* You may adjust margin/padding as needed */
+    margin-right: 5px;
+  }

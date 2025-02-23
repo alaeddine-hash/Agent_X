@@ -1,0 +1,168 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <!-- Loading Spinner -->
+    <div *ngIf="isLoading" class="text-center" style="margin-top: 50px">
+      <mat-spinner></mat-spinner>
+      <p>Loading data, please wait...</p>
+    </div>
+
+    <!-- Error Message -->
+    <div
+      *ngIf="hasError && !isLoading"
+      class="alert alert-danger"
+      style="margin-top: 20px"
+    >
+      {{ errorMessage }}
+    </div>
+
+    <!-- Main Dashboard (only visible when data is loaded and no error) -->
+    <div *ngIf="!isLoading && !hasError">
+      <!-- Summary Cards -->
+      <div class="row">
+        <div class="col-lg-3 col-md-6 col-sm-6">
+          <div class="card card-stats">
+            <div class="card-header card-header-info card-header-icon">
+              <div class="card-icon">
+                <i class="material-icons">business</i>
+              </div>
+              <p class="card-category">Total Companies</p>
+              <h3 class="card-title">{{ companiesCount }}</h3>
+            </div>
+            <div class="card-footer">
+              <div class="stats">
+                <i class="material-icons">update</i> Data loaded from CSV
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Additional Insights Card -->
+        <div class="col-lg-8 col-md-12">
+          <div class="card">
+            <div class="card-header card-header-primary">
+              <h4 class="card-title">Additional Insights</h4>
+              <p class="card-category">
+                An analysis of market trends in AI supplier research and RFP
+                strategies.
+              </p>
+            </div>
+            <div class="card-body">
+              <p>
+                Explore data trends, compare company sizes, and review other
+                relevant metrics to help guide your RFP business decisions in
+                the AI sector.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Row -->
+      <div class="row">
+        <!-- Bar Chart: Companies Founded per Year -->
+        <div class="col-md-6">
+          <div class="card card-chart">
+            <div class="card-header card-header-success">
+              <div class="ct-chart" id="foundedYearChart"></div>
+            </div>
+            <div class="card-body">
+              <h4 class="card-title">Companies Founded per Year</h4>
+              <p class="card-category">
+                This chart displays the count of AI supplier companies founded
+                in each year.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Line Chart: Industry Distribution -->
+        <div class="col-md-6">
+          <div class="card card-chart">
+            <div class="card-header card-header-warning">
+              <div class="ct-chart" id="industryChart"></div>
+            </div>
+            <div class="card-body">
+              <h4 class="card-title">Industry Distribution</h4>
+              <p class="card-category">
+                The distribution of companies across various industry segments.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Donut Chart Row: Company Size Distribution -->
+      <!-- Completed Tasks Chart Row -->
+      <!-- Employee Distribution by Company Size Chart -->
+      <div class="row">
+        <div class="col-md-6">
+          <div class="card card-chart">
+            <div class="card-header card-header-danger">
+              <div class="ct-chart" id="employeeChart"></div>
+            </div>
+            <div class="card-body">
+              <h4 class="card-title">Employee Distribution by Company Size</h4>
+              <p class="card-category">
+                Illustrating the distribution of companies according to their
+                size. Use this information to identify which company sizes
+                dominate the landscape and to spot any notable outliers.
+              </p>
+            </div>
+            <div class="card-footer">
+              <div class="stats">
+                <i class="material-icons">access_time</i> Updated recently
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Table of Top Companies by Score (right side) -->
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-header card-header-warning">
+              <h4 class="card-title">Top Companies by Score</h4>
+              <p class="card-category">Highest scoring companies from CSV</p>
+            </div>
+            <div class="card-body table-responsive">
+              <table class="table table-hover">
+                <thead class="text-warning">
+                  <th>ID</th>
+                  <th>Company</th>
+                  <th>Score</th>
+                  <th>Location</th>
+                </thead>
+                <tbody>
+                  <!-- Loop through the topSuppliers array -->
+                  <tr *ngFor="let supplier of topSuppliers; let i = index">
+                    <td>{{ i + 1 }}</td>
+                    <td>{{ supplier.identifiedSuppliers }}</td>
+                    <td>{{ supplier.finalScore }}</td>
+                    <td>
+                      <span
+                        style="cursor: pointer; text-decoration: underline"
+                        (click)="toggleLocations(supplier)"
+                      >
+                        {{ getFirstLocation(supplier.locations) }}
+                      </span>
+                      <div class="mt-2" *ngIf="supplier.showLocations">
+                        <ul class="list-unstyled">
+                          <li
+                            *ngFor="
+                              let loc of getLocationsArray(supplier.locations)
+                            "
+                          >
+                            {{ loc }}
+                          </li>
+                        </ul>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End of Main Dashboard -->
+  </div>
+</div>

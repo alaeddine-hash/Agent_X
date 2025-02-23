@@ -1,0 +1,160 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header card-header-danger">
+            <h4 class="card-title">Companies profiles</h4>
+            <p class="card-category">Curated AI supplier data for RFP</p>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead class="text-primary">
+                  <tr>
+                    <th>ID</th>
+                    <th>Supplier Name</th>
+                    <th>Final Score</th>
+                    <th>LinkedIn</th>
+                    <th>Website</th>
+                    <th>Company Size</th>
+                    <th>Founded</th>
+                    <th>Locations</th>
+                    <th>Mentioned Links</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Use paginatedSuppliers instead of suppliers -->
+                  <tr
+                    *ngFor="let supplier of paginatedSuppliers; let i = index"
+                  >
+                    <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+                    <!-- Supplier name => showDescription pop-up -->
+                    <td
+                      (click)="showDescription(supplier)"
+                      style="cursor: pointer"
+                      [innerHTML]="supplier.identifiedSuppliers"
+                    ></td>
+                    <td>{{ supplier.finalScore }}</td>
+                    <td>
+                      <a
+                        *ngIf="supplier.linkedinPage.trim()"
+                        [href]="supplier.linkedinPage"
+                        target="_blank"
+                      >
+                        <img
+                          src="https://cdn-icons-png.flaticon.com/512/174/174857.png"
+                          width="20"
+                        />
+                      </a>
+                    </td>
+                    <td>
+                      <a
+                        *ngIf="supplier.website.trim()"
+                        [href]="supplier.website"
+                        target="_blank"
+                      >
+                        <img
+                          src="https://cdn-icons-png.flaticon.com/512/1006/1006771.png"
+                          width="20"
+                        />
+                      </a>
+                    </td>
+                    <td>{{ supplier.companySize }}</td>
+                    <td>{{ supplier.founded }}</td>
+                    <td>
+                      <span
+                        style="cursor: pointer; text-decoration: underline"
+                        (click)="toggleLocations(supplier)"
+                      >
+                        {{ getFirstLocation(supplier.locations) }}
+                      </span>
+                      <div class="mt-2" *ngIf="supplier.showLocations">
+                        <ul class="list-unstyled">
+                          <li
+                            *ngFor="
+                              let loc of getLocationsArray(supplier.locations)
+                            "
+                          >
+                            {{ loc }}
+                          </li>
+                        </ul>
+                      </div>
+                    </td>
+                    <td>
+                      <!-- background-less button for Mentioned Links -->
+                      <button class="btn-no-bg" (click)="toggleLinks(supplier)">
+                        MENTIONED LINKS
+                      </button>
+                      <div *ngIf="supplier.showLinks" class="mt-2">
+                        <ul class="list-unstyled">
+                          <li
+                            *ngFor="
+                              let link of getMentionedLinksArray(
+                                supplier.mentionedLinks
+                              )
+                            "
+                          >
+                            <a [href]="link" target="_blank">{{ link }}</a>
+                          </li>
+                        </ul>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Bootstrap pagination controls -->
+            <nav aria-label="Table pagination">
+              <ul class="pagination justify-content-center">
+                <li class="page-item" [class.disabled]="currentPage <= 1">
+                  <a
+                    class="page-link"
+                    (click)="prevPage()"
+                    style="cursor: pointer"
+                    >Previous</a
+                  >
+                </li>
+                <li
+                  class="page-item"
+                  *ngFor="let p of pages"
+                  [class.active]="p === currentPage"
+                >
+                  <a
+                    class="page-link"
+                    (click)="goToPage(p)"
+                    style="cursor: pointer"
+                    >{{ p }}</a
+                  >
+                </li>
+                <li
+                  class="page-item"
+                  [class.disabled]="currentPage >= totalPages"
+                >
+                  <a
+                    class="page-link"
+                    (click)="nextPage()"
+                    style="cursor: pointer"
+                    >Next</a
+                  >
+                </li>
+              </ul>
+            </nav>
+          </div>
+
+          <div class="card-footer">
+            <div class="stats">
+              <p class="text-muted">
+                This table displays AI supplier data filtered by our advanced AI
+                search algorithm, tailored to support your RFP. Data is loaded
+                dynamically from Google Sheets, with pagination set to
+                {{ pageSize }} rows per page.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

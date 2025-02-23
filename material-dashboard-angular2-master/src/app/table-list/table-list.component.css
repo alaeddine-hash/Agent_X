@@ -1,0 +1,15 @@
+.btn-no-bg {
+    background: none;
+    border: none;
+    color: #3f51b5; /* link color */
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+  }
+  
+  .btn-no-bg:hover {
+    text-decoration: underline;
+  }
+  
+  /* (Optional) Additional styling for pagination, if desired */
+  
