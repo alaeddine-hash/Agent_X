@@ -192,24 +192,14 @@ export class DashboardComponent implements OnInit, AfterViewInit {
             ]
           };
 
-          // 5) Define the custom ticks: 5-year increments from 1995..2020, 1-year increments 2021..2026
           const yearTicks = [
-            1995, 2000, 2005, 2010, 2015, 2020, // increments of 5
-            2021, 2022, 2023, 2024, 2025, 2026 // increments of 1
+            1995, 2000, 2005, 2010, 2015, 2020, // increments de 5
+            2021, 2022, 2023, 2024, 2025, 2026 // increments de 1
           ];
-          // Transform them
+          
+          // On transforme ces années en valeurs de l’axe (x = transformFounded(year))
           const domainTicks = yearTicks.map(y => this.transformFounded(y));
-
-          // 6) A local function to invert transform => real year
-          const invertFn = (val: number) => {
-            if (val >= 20) {
-              return (2020 + (val - 20)).toString();
-            } else {
-              return (2020 - (20 - val) * 5).toString();
-            }
-          };
-
-          // Chart config
+          
           const config: any = {
             type: 'scatter',
             data: chartData,
@@ -219,18 +209,29 @@ export class DashboardComponent implements OnInit, AfterViewInit {
               scales: {
                 x: {
                   type: 'linear',
-                  min: 15, // year=1995 => x=15
-                  max: 26, // year=2026 => x=26
+                  min: 15, // 1995 => x=15
+                  max: 26, // 2026 => x=26
                   title: {
                     display: true,
                     text: 'Founded',
                     color: '#444'
                   },
-                  // Provide the custom domain ticks
                   ticks: {
-                    values: domainTicks,
-                    callback: (val: number) => invertFn(val),
+                    // On veut dessiner ces valeurs précises (transformées)
+                    values: domainTicks,         // [15,16,17,18,19,20,21,22,23,24,25,26]
+                    autoSkip: false,             // ne saute aucune graduation
+                    maxTicksLimit: domainTicks.length, // force l’affichage de toutes
+                    stepSize: 1,                 // incrément de 1 entre chaque tick
+                    callback: (val: number) => this.invertTransform(val),
                     color: '#444'
+                  },
+                  grid: {
+                    color: 'rgba(0,0,0,0.2)',       // Couleur de la grille
+                    borderColor: 'rgba(0,0,0,0.6)', // Bordure de l’axe
+                    borderWidth: 2,
+                    lineWidth: 1,
+                    drawOnChartArea: true,
+                    drawTicks: true
                   }
                 },
                 y: {
@@ -243,6 +244,14 @@ export class DashboardComponent implements OnInit, AfterViewInit {
                   },
                   ticks: {
                     color: '#444'
+                  },
+                  grid: {
+                    color: 'rgba(0,0,0,0.2)',
+                    borderColor: 'rgba(0,0,0,0.6)',
+                    borderWidth: 2,
+                    lineWidth: 1,
+                    drawOnChartArea: true,
+                    drawTicks: true
                   }
                 }
               },
@@ -252,7 +261,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
                 tooltip: {
                   callbacks: {
                     label: (ctx: any) => {
-                      const realYear = invertFn(ctx.raw.x);
+                      const realYear = this.invertTransform(ctx.raw.x);
                       const score = ctx.raw.y;
                       const supplierName = ctx.raw.name || 'Unknown Supplier';
                       return `Supplier: ${supplierName}\nFounded Year: ${realYear}, Score: ${score}`;
@@ -265,6 +274,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
               }
             }
           };
+          
+          
 
           // Destroy old chart if any
           if (this.quadrantChart) {
